@@ -1100,6 +1100,20 @@ class Main:
                     }
             except Exception as e:
                 print(f"Myket search failed: {e}")
+                print("Re-obtaining Myket session...")
+                self.myket = Myket(None, self.arch_config["abis"])
+                try:
+                    myket_results = self.myket.search(query)
+                    for pkg, info in myket_results.items():
+                        results[pkg] = {
+                            "name": info["name"],
+                            "myket_version": info["version"],
+                            "bazaar_version": None,
+                            "store": "Myket",
+                        }
+                    print("Myket session re-obtained successfully")
+                except Exception as retry_e:
+                    print(f"Myket retry failed: {retry_e}")
 
         if self.store_preference in ["both", "bazaar"]:
             try:
